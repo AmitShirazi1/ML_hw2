@@ -13,7 +13,7 @@ class PerceptronClassifier:
         Constructor for the PerceptronClassifier.
         """
         # TODO - Place your student IDs here. Single submitters please use a tuple like so: self.ids = (123456789,)
-        self.ids = (123456789, 987654321)
+        self.ids = (319044434, 314779166)
 
     def fit(self, X: np.ndarray, y: np.ndarray):
         """
@@ -23,9 +23,24 @@ class PerceptronClassifier:
         :param y: A 1-dimensional numpy array of m rows. it is guaranteed to match X's rows in length (|m_x| == |m_y|).
         Array datatype is guaranteed to be np.uint8.
         """
+        self.num_classes = len(np.unique(y))
+        X_with_bias = np.column_stack((np.ones(len(X)), X))  # Add bias term
+        self.max_iterations = len(X)
+        self.num_features_with_bias = X_with_bias.shape[1]
+        self.weights = np.zeros((self.num_classes, self.num_features_with_bias), dtype=np.float32)
 
-        # TODO - your code here
-        pass
+        t = 0
+        for x_t, y_t in zip(X_with_bias, y):
+            y_t_pred = np.argmax(np.dot(self.weights, x_t))  # We get the index of the max value of dot product which is the predicted class.
+
+            if y_t_pred != y_t:
+                self.weights[y_t] += x_t
+                self.weights[y_t_pred] -= x_t
+
+            t += 1
+            if t == self.max_iterations:
+                break
+
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -35,12 +50,14 @@ class PerceptronClassifier:
         Array datatype is guaranteed to be np.float32.
         :return: A 1-dimensional numpy array of m rows. Should be of datatype np.uint8.
         """
+        # Preprocess data
+        X_with_bias = np.column_stack((np.ones(len(X)), X))  # Add bias term
+        y_pred = np.zeros(len(X), dtype=np.uint8)
 
-        # TODO - your code here
-        pass
-
-        ### Example code - don't use this:
-        # return np.random.randint(low=0, high=2, size=len(X), dtype=np.uint8)
+        for i, x in enumerate(X_with_bias):
+            y_pred[i] = np.argmax(np.dot(self.weights, x))
+        
+        return y_pred
 
 
 if __name__ == "__main__":
