@@ -12,9 +12,11 @@ class PerceptronClassifier:
         """
         Constructor for the PerceptronClassifier.
         """
-        # TODO - Place your student IDs here. Single submitters please use a tuple like so: self.ids = (123456789,)
-        self.ids = (319044434, 314779166)
 
+        self.ids = (319044434, 314779166)
+       
+       
+            
     def fit(self, X: np.ndarray, y: np.ndarray):
         """
         This method trains a multiclass perceptron classifier on a given training set X with label set y.
@@ -23,23 +25,22 @@ class PerceptronClassifier:
         :param y: A 1-dimensional numpy array of m rows. it is guaranteed to match X's rows in length (|m_x| == |m_y|).
         Array datatype is guaranteed to be np.uint8.
         """
+        print("Fitting PerceptronClassifier...")
+
         self.num_classes = len(np.unique(y))
         X_with_bias = np.column_stack((np.ones(len(X)), X))  # Add bias term
         self.max_iterations = len(X)
         self.num_features_with_bias = X_with_bias.shape[1]
-        self.weights = np.zeros((self.num_classes, self.num_features_with_bias), dtype=np.float32)
+        self.weights = np.zeros((self.num_classes, self.num_features_with_bias), dtype=np.float32) # The W from the pseudo code is initialized to zeros.
 
-        t = 0
-        for x_t, y_t in zip(X_with_bias, y):
-            y_t_pred = np.argmax(np.dot(self.weights, x_t))  # We get the index of the max value of dot product which is the predicted class.
-
-            if y_t_pred != y_t:
-                self.weights[y_t] += x_t
-                self.weights[y_t_pred] -= x_t
-
-            t += 1
-            if t == self.max_iterations:
-                break
+        for _ in range(self.max_iterations): # We iterate over the dataset until we reach the maximum number of iterations.    
+            for x_t, y_t in zip(X_with_bias, y):
+                y_t_pred = np.argmax(np.dot(self.weights, x_t))  # We get the index of the max value of dot product which is the predicted class.
+              
+                if y_t_pred != y_t: # If the prediction is wrong, we update the weights according to pseudo code provided.
+                    self.weights[y_t] += x_t 
+                    self.weights[y_t_pred] -= x_t
+               
 
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -52,16 +53,15 @@ class PerceptronClassifier:
         """
         # Preprocess data
         X_with_bias = np.column_stack((np.ones(len(X)), X))  # Add bias term
-        y_pred = np.zeros(len(X), dtype=np.uint8)
+        y_pred = np.zeros(len(X), dtype=np.uint8) # We initialize the array of predictions with zeros.
 
         for i, x in enumerate(X_with_bias):
-            y_pred[i] = np.argmax(np.dot(self.weights, x))
-        
+            y_pred[i] = np.argmax(np.dot(self.weights, x)) # We get the index of the max value of dot product which is the predicted class.
+         
         return y_pred
 
 
 if __name__ == "__main__":
-
     print("*" * 20)
     print("Started HW2_ID1_ID2.py")
     # Parsing script arguments
